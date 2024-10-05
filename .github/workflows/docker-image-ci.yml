@@ -7,19 +7,20 @@ on:
 
 jobs:
   build-and-push:
-    runs-on: ubuntu-latest
+    runs-on: macOS
     steps:
       - uses: actions/checkout@v3
 
       # Login to "owntube" organization on Docker Hub
       - uses: docker/login-action@v3
         with:
+          registry: docker.io
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_TOKEN }}
 
       # Build minio-client image
       - name: Build the `owntube/minio-client` Docker image
-        run: docker build . --tag owntube/minio-client:2024.3.30-debian-12-r2
+        run: docker buildx build --platform linux/amd64,linux/arm64 . --tag owntube/minio-client:2024.3.30-debian-12-r2
 
       # Test minio-client image
       - name: Test the `owntube/minio-client` Docker image
